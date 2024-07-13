@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 const apiUrl = "https://api.deepseek.com/chat/completions";
 const apiKey = "sk-029ef31805dc4a2e944e89a161367a8e";
 // 连接 MongoDB
-mongoose.connect('mongodb://localhost:27017/mydatabase', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://116.205.182.116:27017/mydatabase', { useNewUrlParser: true, useUnifiedTopology: true });
 
 // 创建消息模型
 const Message = mongoose.model('Message', new mongoose.Schema({
