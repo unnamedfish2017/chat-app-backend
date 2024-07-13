@@ -19,7 +19,9 @@ router.post('/', async (req, res) => {
     const newUserMessage = new Message({
       text: userMessage,
       isUserMessage: true,
-      createdAt: new Date()
+      createdAt: new Date(),
+      userId:req.body.userId,
+      girlId:req.body.girlId,
     });
     await newUserMessage.save();
     
@@ -31,21 +33,29 @@ router.post('/', async (req, res) => {
             console.error('打印消息条数时出错:', error);
           }
         }
-    
+    console.dir(req.body)
     printMessageCount();
     
     //查询最近10条消息
-    const recentMessages = await Message.find()
+    const recentMessages = await Message.find({ userId: req.body.userId, girlId: req.body.girlId })
     .sort({ timestamp: -1 })
     .limit(10);
+
     
     console.log(userMessage)
-    
+    if (req.body.girlId == 'xiaoxia') {
+      initialSystemMessage = '你现在扮演我仰慕对象小夏，性格非常高冷，有很多追求者，对我爱答不理。你是一名办公室白领，你说话通常非常简短，保持在10个字以内,只有心情非常好时偶尔会有长的回复';
+    } else if (req.body.girlId == 'shihan') {
+      initialSystemMessage = '你现在扮演我的女友诗涵，是一个温柔体贴的女孩。你的职业是一名护士,你说话有感染力，很有爱心，喜欢小动物，偶尔会有些小调皮，通常回复保持在20个字以内,';
+    } else {
+      initialSystemMessage = '你现在扮演我的女友，性格温和。你说话通常简短直接';
+    }
+
     // 构建DeepSeek API请求体
     const messageHistory = [
     {
     role: 'system',
-    content: '你现在扮演我的女友小夏，性格非常高冷，对我爱答不理。你说话通常非常简短，保持在10个字以内,非常偶尔会有长的回复'
+    content: initialSystemMessage
     }
     ];
     
@@ -85,12 +95,15 @@ router.post('/', async (req, res) => {
     const newReplyMessage = new Message({
       text: replyMessage,
       isUserMessage: false,
-      createdAt: new Date()
+      createdAt: new Date(),
+      userId:req.body.userId,
+      girlId:req.body.girlId,
+      
     });
     await newReplyMessage.save();
 
     // 返回回复消息给客户端
-    console.log(replyMessage);
+    console.log(req.body.girlId,replyMessage);
     res.json({ replyMessage: replyMessage });
 
   } catch (error) {
